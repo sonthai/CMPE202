@@ -1,13 +1,16 @@
 package model;
 
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.Type;
+
 import java.util.List;
 
 /**
  * Created by sonthai on 2/20/17.
  */
 public class MethodPojo {
-    public MethodPojo(String type, String name) {
-        this.methodType = type;
+    public MethodPojo(Type type, String name) {
+        this.methodType = type.toString();
         this.methodName = name;
     }
 

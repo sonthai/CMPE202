@@ -54,8 +54,17 @@ public class ClassPojo {
         isInterface = anInterface;
     }
 
+    public List<ConstructorPojo> getConstructors() {
+        return constructors;
+    }
+
+    public void setConstructors(List<ConstructorPojo> constructors) {
+        this.constructors = constructors;
+    }
+
 
     private String className;
+    private List<ConstructorPojo> constructors;
     private List<FieldPojo> fields;
     private List<MethodPojo> methods;
     private List<String> extendedTypes;
