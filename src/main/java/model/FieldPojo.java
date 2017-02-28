@@ -8,9 +8,9 @@ import com.github.javaparser.ast.type.*;
  * Created by sonthai on 2/20/17.
  */
 public class FieldPojo {
-    public FieldPojo(boolean isPublic, NodeList<VariableDeclarator> var) {
+    public FieldPojo(boolean isPublic, VariableDeclarator var) {
         this.isPublic = isPublic;
-        Type varType = var.get(0).getType();
+        Type varType = var.getType();
         if (varType instanceof PrimitiveType) {
             this.type = varType.toString();
             isPrimitiveType = true;
@@ -32,7 +32,7 @@ public class FieldPojo {
             }
         }
 
-        this.fieldName = var.get(0).getNameAsString();
+        this.fieldName = var.getNameAsString();
     }
 
     public String getType() {

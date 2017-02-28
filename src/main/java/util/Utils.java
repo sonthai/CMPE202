@@ -6,7 +6,9 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +19,7 @@ public class Utils {
     final static Logger LOG = Logger.getLogger(Utils.class);
 
     public List<String> getFilePaths(String sourceDir) {
-        StringBuilder sb;
+        /*StringBuilder sb;
         List<String> filePaths =  new ArrayList<String>();
 
         List<String> files = getListFiles(sourceDir);
@@ -26,7 +28,8 @@ public class Utils {
             filePaths.add(sb.append(sourceDir).append("/").append(f).toString());
         }
 
-        return filePaths;
+        return filePaths;*/
+        return loadFilesFromDir(sourceDir);
     }
 
 
@@ -34,8 +37,7 @@ public class Utils {
         List<String> files =  new ArrayList<String>();
         ClassLoader classLoader = getClass().getClassLoader();
         try {
-            String dirStr = IOUtils.toString(classLoader.getResource(sourceDir));
-
+            String dirStr = IOUtils.toString(new URL(sourceDir));//classLoader.getResource(sourceDir));
             for (String p: dirStr.split("\n")) {
                 if (p.endsWith(".java")) {
                     files.add(p);
@@ -43,6 +45,18 @@ public class Utils {
             }
         } catch (IOException e) {
             LOG.error("Failed to find path " + sourceDir);
+        }
+
+        return files;
+    }
+
+    private List<String> loadFilesFromDir(String folder) {
+        List<String> files =  new ArrayList<String>();
+        final File fileList = new File(folder);
+        for (File p: fileList.listFiles()) {
+            if (p.getName().endsWith(".java")) {
+                files.add(p.getAbsoluteFile().toString());
+            }
         }
 
         return files;

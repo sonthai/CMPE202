@@ -9,11 +9,13 @@ import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.AssignExpr;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
+import com.github.javaparser.ast.expr.VariableDeclarationExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.Type;
 import model.*;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
@@ -31,8 +33,9 @@ public class MyJavaParser {
     public static Map<String, ClassPojo> rules = new HashMap<String, ClassPojo>();
     public static Map<String, Integer> accessAttrMap = new HashMap<String, Integer>();
     public static Map<String, String>  classMapping = new HashMap<>();
+    public static Map<String, List<String>> varsInMain = null;
     static int i = 0;
-    public static void parse(String sourceDir) {
+    public static void parse(String sourceDir, String destDir) {
         CompilationUnit compilationUnit = null;
         List<ClassOrInterfaceDeclaration> classesOrInterafces = null;
         List<FieldPojo> fields = null;
@@ -46,7 +49,8 @@ public class MyJavaParser {
         List<String> files = utils.getFilePaths(sourceDir);
         try {
             for (String f : files) {
-                File sourceFile = new File(rootDir + f);
+                File sourceFile = new File(f);
+                System.out.println("Source file " + sourceFile);
                 compilationUnit = JavaParser.parse(sourceFile);
                 classesOrInterafces = compilationUnit.getNodesByType(ClassOrInterfaceDeclaration.class);
                 for (ClassOrInterfaceDeclaration declaration : classesOrInterafces) {
@@ -55,6 +59,7 @@ public class MyJavaParser {
                     pj.setClassName(declaration.getNameAsString());
 
                     implementedTypes = new ArrayList<String>();
+
                     for (ClassOrInterfaceType type: declaration.getImplementedTypes()) {
                         implementedTypes.add(type.getNameAsString());
                     }
@@ -70,7 +75,7 @@ public class MyJavaParser {
                     fields = new ArrayList<FieldPojo>();
                     for (FieldDeclaration field: declaration.getFields()) {
                         if (field.isPrivate() || field.isPublic()) {
-                            FieldPojo fieldPj = new FieldPojo(field.isPublic(), field.getVariables());
+                            FieldPojo fieldPj = new FieldPojo(field.isPublic(), field.getVariables().get(0));
                             fields.add(fieldPj);
                         }
                     }
@@ -83,7 +88,6 @@ public class MyJavaParser {
                             constructorPojo.setConstructor(constructor.getName().toString());
                             constructor.getParameters().forEach((Parameter param) ->
                                     constructorPojo.addParams(new ParamPojo(param.getType(), param.getName().toString()))
-                                    //constructorPojo.setParams(param.getType().toString(), param.getName().toString())
                             );
                             constructors.add(constructorPojo);
                         }
@@ -110,7 +114,12 @@ public class MyJavaParser {
                                 }
                             }
 
-
+                            // Analyze main method
+                            if (method.getName().getIdentifier().equals("main")) {
+                                varsInMain = new HashMap<>();
+                                List<String> vars = new ArrayList<>(analyzeBodyMethod(method));
+                                varsInMain.put(pj.getClassName(), vars);
+                            }
 
                             List<ParamPojo> params = new ArrayList<ParamPojo>();
                             MethodPojo methodPj = new MethodPojo(method.getType(), method.getNameAsString());
@@ -127,50 +136,16 @@ public class MyJavaParser {
                     rules.put(pj.getClassName(), pj);
                 }
             }
-            umlConfigGen(classPojos);
-            utils.prettyJson(classPojos);
+            umlConfigGen(classPojos, destDir);
+            //utils.prettyJson(classPojos);
             rules.clear();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    private static void umlConfigGen(List<ClassPojo> classPojos) {
-        String fileName = "file " + i + ".png";
-        /*Writer writer = null;
-
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(fileName), "utf-8"));
-            writer.write("@startuml\n");
-            for (ClassPojo pj: classPojos) {
-                writer.write("\nclass " + pj.getClassName() + " {");
-                for (FieldPojo field: pj.getFields()) {
-                    writer.write("\n\t");
-                    if (field.isPublic()) {
-                        writer.write("+");
-                    } else {
-                        writer.write("-");
-                    }
-                    writer.write(field.getFieldName() + " : " + field.getType());
-                }
-
-                for (MethodPojo method: pj.getMethods()) {
-                    writer.write("\n\t+"  + method.getMethodName() + " : " + method.getMethodType());
-                }
-
-                writer.write("\n}\n");
-            }
-            writer.write("\n@enduml");
-        } catch (IOException ex) {
-
-        } finally {
-            try {
-                writer.close();
-                i++;
-            } catch (Exception ex) {
-            }
-        }*/
+    private static void umlConfigGen(List<ClassPojo> classPojos, String destDir) {
+        String fileName = "file" + i + ".png";
         StringBuilder plantUmlSource = new StringBuilder();
         StringBuilder extraUmlSource = new StringBuilder();
         Set<String> duplicates = new HashSet<String>();
@@ -197,10 +172,6 @@ public class MyJavaParser {
                     String multiplicity = "";
                     for (FieldPojo f : cpj.getFields()) {
                         if (f.getType().equals(pj.getClassName())) {
-                            /*extraUmlSource.append(pj.getClassName()).append(" \"").append(f.getMultiplicity()).append("\"").append(" -- ");
-                            extraUmlSource.append("\"").append(field.getMultiplicity());
-                            extraUmlSource.append("\" ").append(cpj.getClassName());
-                            extraUmlSource.append("\n");*/
                             multiplicity = f.getMultiplicity();
                             break;
                         }
@@ -278,34 +249,25 @@ public class MyJavaParser {
             }
 
             plantUmlSource.append("\n}");
+
+            if (varsInMain != null && varsInMain.containsKey(pj.getClassName())) {
+                List<String> vars = varsInMain.get(pj.getClassName());
+                vars.forEach((String var) -> {
+                    extraUmlSource.append(var).append("<..").append(pj.getClassName()).append("\n");
+                });
+            }
+
+
         }
         plantUmlSource.append("\n");
-        plantUmlSource.append(extraUmlSource);
-        /*Set<String> duplicates = new HashSet<String>();
-        for (Map.Entry<String, ClassPojo> rule: rules.entrySet()) {
-            for (FieldPojo fieldPj: rule.getValue().getFields()) {
-                if (rules.containsKey(fieldPj.getType()) && !duplicates.contains(fieldPj.getType())) {
-                    ClassPojo cpj = rules.get(fieldPj.getType());
-                    for (FieldPojo f : cpj.getFields()) {
-                        if (f.getType().equals(rule.getKey())) {
-                            plantUmlSource.append(rule.getKey()).append(" \"").append(f.getMultiplicity()).append("\"").append(" -- ");
-                            plantUmlSource.append("\"").append(fieldPj.getMultiplicity());
-                            plantUmlSource.append("\" ").append(cpj.getClassName()); //).append("\n(").append(rule.getKey()).append(", ").append(cpj.getClassName()).append(")");
-                            plantUmlSource.append("\n");
-                            break;
-                        }
-                    }
-                }
-            }
-            duplicates.add(rule.getKey());
-        }*/
 
+        plantUmlSource.append(extraUmlSource);
         plantUmlSource.append("\n@enduml");
         System.out.println("************");
         System.out.println(plantUmlSource.toString());
         try {
             SourceStringReader reader = new SourceStringReader(plantUmlSource.toString());
-            FileOutputStream output = new FileOutputStream(new File(fileName));
+            FileOutputStream output = new FileOutputStream(new File(destDir + fileName));
             reader.generateImage(output, new FileFormatOption(FileFormat.PNG, false));
             i++;
         } catch (Exception e) {}
@@ -313,7 +275,6 @@ public class MyJavaParser {
 
     public static String checkIfGetterSetterMethods(MethodDeclaration method) {
         Optional<BlockStmt> body = method.getBody();
-        //System.out.println(method.getName() + " " + method.getParentNode());
         NodeList<Statement> block = body.get().getStatements();
         String fieldAccess = "";
 
@@ -339,5 +300,22 @@ public class MyJavaParser {
 
 
         return fieldAccess;
+    }
+
+    public static Set<String> analyzeBodyMethod(MethodDeclaration method) {
+        Set<String> variables = new HashSet<>();
+        NodeList<Statement> statements = method.getBody().get().getStatements();
+
+        for (Statement stmt: statements) {
+            for (VariableDeclarator varDecl: stmt.getNodesByType(VariableDeclarator.class)) {
+                FieldPojo fieldPojo = new FieldPojo(false, varDecl);
+                if (!fieldPojo.isPrimitiveType() && !fieldPojo.getType().equals("String")) {
+                    variables.add(fieldPojo.getType());
+                }
+            }
+        }
+
+        return variables;
+
     }
 }

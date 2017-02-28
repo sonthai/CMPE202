@@ -13,11 +13,16 @@ public class Main {
 
 
     public static void main(String[] args) throws Exception {
-        List<String> testcaseDirs = Arrays.asList("testcase1", "testcase2");
-        for (String s: testcaseDirs) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("testcases/").append(s);
-            new MyJavaParser().parse(sb.toString());
+        if (args.length < 2) {
+            System.out.println("umlparser <source folder> <output file name>");
+        } else {
+            System.out.println(args[0] + "," + args[1]);
+            //List<String> testcaseDirs = Arrays.asList("testcase1", "testcase2", "testcase3", "testcase4", "testcase5");
+            //for (String s : testcaseDirs) {
+                StringBuilder sb = new StringBuilder();
+                //sb.append("testcases/").append(s);
+                new MyJavaParser().parse(args[0], args[1]);
+            //}
         }
     }
 }
