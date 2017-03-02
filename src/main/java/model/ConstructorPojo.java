@@ -14,7 +14,6 @@ public class ConstructorPojo {
         paramList = new ArrayList<>();
     }
 
-
     public List<ParamPojo> getParamList() {
         return paramList;
     }
@@ -26,6 +25,7 @@ public class ConstructorPojo {
     public void addParams(ParamPojo p) {
         paramList.add(p);
     }
+
     public String getConstructor() {
         return constructor;
     }
