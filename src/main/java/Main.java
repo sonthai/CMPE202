@@ -1,6 +1,3 @@
-import java.util.*;
-
-
 import org.apache.log4j.Logger;
 import parser.MyJavaParser;
 
@@ -17,11 +14,12 @@ public class Main {
             System.out.println("umlparser <source folder> <output file name>");
         } else {
             System.out.println(args[0] + "," + args[1]);
-            //List<String> testcaseDirs = Arrays.asList("testcase1", "testcase2", "testcase3", "testcase4", "testcase5");
+            new MyJavaParser();
+				//List<String> testcaseDirs = Arrays.asList("testcase1", "testcase2", "testcase3", "testcase4", "testcase5");
             //for (String s : testcaseDirs) {
-                StringBuilder sb = new StringBuilder();
+                //StringBuilder sb = new StringBuilder();
                 //sb.append("testcases/").append(s);
-                new MyJavaParser().parse(args[0], args[1]);
+                MyJavaParser.parse(args[0], args[1]);
             //}
         }
     }

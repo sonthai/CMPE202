@@ -1,6 +1,5 @@
 package model;
 
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 
 import java.util.List;

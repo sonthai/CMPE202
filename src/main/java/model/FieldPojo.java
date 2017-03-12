@@ -1,6 +1,5 @@
 package model;
 
-import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.type.*;
 
