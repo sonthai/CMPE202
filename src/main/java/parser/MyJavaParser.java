@@ -34,7 +34,8 @@ public class MyJavaParser {
     public static Map<String, Integer> accessAttrMap = new HashMap<String, Integer>();
     public static Map<String, String>  classMapping = new HashMap<>();
     public static Map<String, List<String>> varsInMain = null;
-    static int i = 0;
+    public static String outputFileName;
+    //static int i = 0;
     public static void parse(String sourceDir, String destDir) {
         CompilationUnit compilationUnit = null;
         List<ClassOrInterfaceDeclaration> classesOrInterafces = null;
@@ -44,6 +45,7 @@ public class MyJavaParser {
         List<ClassPojo> classPojos = new ArrayList<ClassPojo>();
         List<String> extendedTypes = null;
         List<String> implementedTypes = null;
+        outputFileName = sourceDir.split("/")[sourceDir.split("/").length -1];
 
         Utils utils = new Utils();
         List<String> files = utils.getFilePaths(sourceDir);
@@ -145,7 +147,7 @@ public class MyJavaParser {
     }
 
     private static void umlConfigGen(List<ClassPojo> classPojos, String destDir) {
-        String fileName = "file" + i + ".png";
+        String fileName = outputFileName + ".png"; //"file" + i + ".png";
         StringBuilder plantUmlSource = new StringBuilder();
         StringBuilder extraUmlSource = new StringBuilder();
         Set<String> duplicates = new HashSet<String>();
@@ -269,7 +271,7 @@ public class MyJavaParser {
             SourceStringReader reader = new SourceStringReader(plantUmlSource.toString());
             FileOutputStream output = new FileOutputStream(new File(destDir + fileName));
             reader.generateImage(output, new FileFormatOption(FileFormat.PNG, false));
-            i++;
+            //i++;
         } catch (Exception e) {}
     }
 
