@@ -24,13 +24,13 @@ import java.util.*;
  * Created by sonthai on 2/20/17.
  */
 public class MyJavaParser {
-    public static String rootDir = "src/main/resources/";
+    //public static String rootDir = "src/main/resources/";
     public static Map<String, ClassPojo> rules = new HashMap<String, ClassPojo>();
     public static Map<String, Integer> accessAttrMap = new HashMap<String, Integer>();
     public static Map<String, String>  classMapping = new HashMap<>();
     public static Map<String, List<String>> varsInMain = null;
     public static String outputFileName;
-    //static int i = 0;
+    
     public static void parse(String sourceDir, String destDir) {
         CompilationUnit compilationUnit = null;
         List<ClassOrInterfaceDeclaration> classesOrInterafces = null;
@@ -142,48 +142,42 @@ public class MyJavaParser {
     }
 
     private static void umlConfigGen(List<ClassPojo> classPojos, String destDir) {
-        String fileName = outputFileName + ".png"; //"file" + i + ".png";
-        StringBuilder plantUmlSource = new StringBuilder();
-        StringBuilder extraUmlSource = new StringBuilder();
+    	PlantUMLPojo plantUMLObj = new PlantUMLPojo();
+        String fileName = outputFileName + ".png";
         Set<String> duplicates = new HashSet<String>();
-        plantUmlSource.append("@startuml");
+        
+        plantUMLObj.createStartTag();
+        
         for (ClassPojo pj : classPojos) {
             if (pj.isInterface()) {
-                plantUmlSource.append("\ninterface ").append(pj.getClassName()).append(" {");
+            	plantUMLObj.appendInterface(pj.getClassName());	
             } else {
-                plantUmlSource.append("\nclass ").append(pj.getClassName()).append(" {");
+            	plantUMLObj.appendClass(pj.getClassName());
             }
+            plantUMLObj.appendBracket("{");
 
             // Extends and implements
             for (String parentClassOrInterface:  pj.getImplementedTypes()) {
-                extraUmlSource.append(parentClassOrInterface).append(" <|.. ").append(pj.getClassName()).append("\n");
+            	plantUMLObj.buildReferenceRelationship(parentClassOrInterface, pj.getClassName(), " <|.. ", null);
             }
 
             for (String parentClassOrInterface:  pj.getExtendedTypes()) {
-                extraUmlSource.append(parentClassOrInterface).append(" <|-- ").append(pj.getClassName()).append("\n");
+            	plantUMLObj.buildReferenceRelationship(parentClassOrInterface, pj.getClassName(), " <|-- ", null);
             }
+            
             for (FieldPojo field : pj.getFields()) {
                 // Association
                 if (rules.containsKey(field.getType()) && !duplicates.contains(field.getType()) && !field.getType().equals("String")) {
                     ClassPojo cpj = rules.get(field.getType());
-                    String multiplicity = "";
+                    String multiplicity = " ";
                     for (FieldPojo f : cpj.getFields()) {
                         if (f.getType().equals(pj.getClassName())) {
                             multiplicity = f.getMultiplicity();
                             break;
                         }
                     }
-
-                    extraUmlSource.append(pj.getClassName());
-                    if (multiplicity.length() > 0) {
-                        extraUmlSource.append(" \"").append(multiplicity).append("\"");
-                    } else {
-                        extraUmlSource.append(" ");
-                    }
-                    extraUmlSource.append(" -- ");
-                    extraUmlSource.append("\"").append(field.getMultiplicity());
-                    extraUmlSource.append("\" ").append(cpj.getClassName());
-                    extraUmlSource.append("\n");
+                    
+                    plantUMLObj.buildMultiplicity(pj.getClassName(), multiplicity, cpj.getClassName(), field.getMultiplicity());
 
                     duplicates.add(pj.getClassName());
                 }
@@ -192,21 +186,20 @@ public class MyJavaParser {
                     continue;
                 }
 
-                plantUmlSource.append("\n\t");
+                String fieldModifier = "";
                 if (field.isPublic()) {
-                    plantUmlSource.append("+");
+                	fieldModifier = "+";
                 } else {
                     if (accessAttrMap.get(field.getFieldName()) != null && accessAttrMap.get(field.getFieldName()) > 0) {
-                        plantUmlSource.append("+");
+                        fieldModifier = "+";
                     } else {
-                        plantUmlSource.append("-");
+                    	fieldModifier = "-";
                     }
                 }
-                plantUmlSource.append(field.getFieldName()).append(" : ").append(field.getType());
+                plantUMLObj.buildField(fieldModifier, field.getFieldName(), field.getType());
             }
 
             for (ConstructorPojo constructorPojo: pj.getConstructors()) {
-                plantUmlSource.append("\n\t+").append(constructorPojo.getConstructor()).append("(");
                 StringBuilder sb = new StringBuilder();
                 List<ParamPojo> paramList = constructorPojo.getParamList();
                 for (ParamPojo p: paramList) {
@@ -216,16 +209,15 @@ public class MyJavaParser {
                     sb.append(p.getParam()).append(" : ").append(p.getType());
 
                     if (!p.isPrimitiveType() && !p.getParam().equals("String")) {
-                        extraUmlSource.append(p.getType()).append(" <.. ").append(pj.getClassName()).append("\n");
+                    	plantUMLObj.buildReferenceRelationship(p.getType(), pj.getClassName(), " <.. ", null);
                     }
                 }
-
-                plantUmlSource.append(sb).append(")");
+                
+                plantUMLObj.buildConstructor(constructorPojo.getConstructor(), sb.toString());
             }
 
 
             for (MethodPojo method : pj.getMethods()) {
-                plantUmlSource.append("\n\t+").append(method.getMethodName()).append("(");
                 StringBuilder sb = new StringBuilder();
 
                 for(ParamPojo p: method.getParamPojo()) {
@@ -238,36 +230,37 @@ public class MyJavaParser {
                         if (classMapping.get(childClass) == null || classMapping.get(parentClass) == null) {
                             classMapping.put(childClass, parentClass);
                             classMapping.put(parentClass, childClass);
-                            extraUmlSource.append(childClass).append(" <.. ").append(parentClass).append(": uses\n");
+                            plantUMLObj.buildReferenceRelationship(childClass, parentClass, " <.. ", ": uses");
                         }
                     }
                 }
-                plantUmlSource.append(sb).append(") : ").append(method.getMethodType());
+                plantUMLObj.buildMethod(method.getMethodName(), sb.toString(), method.getMethodType());
             }
 
-            plantUmlSource.append("\n}");
+            plantUMLObj.appendNewLine();
+            plantUMLObj.appendBracket("}");
 
             if (varsInMain != null && varsInMain.containsKey(pj.getClassName())) {
                 List<String> vars = varsInMain.get(pj.getClassName());
                 vars.forEach((String var) -> {
-                    extraUmlSource.append(var).append("<..").append(pj.getClassName()).append("\n");
+                	plantUMLObj.buildReferenceRelationship(var, pj.getClassName(), "<.. ", null);
                 });
             }
 
 
         }
-        plantUmlSource.append("\n");
-
-        plantUmlSource.append(extraUmlSource);
-        plantUmlSource.append("\n@enduml");
+        
+        plantUMLObj.createEndTag();
+        System.out.println("*******PlantUML Obj *****");
+        System.out.println(plantUMLObj.buildumlBodyString());
         System.out.println("************");
-        System.out.println(plantUmlSource.toString());
         try {
-            SourceStringReader reader = new SourceStringReader(plantUmlSource.toString());
+            SourceStringReader reader = new SourceStringReader(plantUMLObj.buildumlBodyString());
             FileOutputStream output = new FileOutputStream(new File(destDir + fileName));
             reader.generateImage(output, new FileFormatOption(FileFormat.PNG, false));
-            //i++;
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        	System.out.println(e.getMessage());
+        }
     }
 
     public static String checkIfGetterSetterMethods(MethodDeclaration method) {
@@ -294,8 +287,6 @@ public class MyJavaParser {
 
 
         }
-
-
         return fieldAccess;
     }
 
@@ -313,6 +304,5 @@ public class MyJavaParser {
         }
 
         return variables;
-
     }
 }
