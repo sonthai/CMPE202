@@ -1,7 +1,7 @@
-package aop_test;
+package sequencediagram;
 
 public aspect AspectJTest {
-	pointcut traceCall(): (execution(* *(..)) || initialization(*.new(..))) && within(AspectJTestDemo || Test || Test2);
+	pointcut traceCall(): (execution(* *()) || initialization(*.new(..))) && within(sample.test.*);
 	before(): traceCall() {
 		System.out.println("Call from " + thisJoinPointStaticPart.getSourceLocation().getWithinType().getSimpleName()
 				+ " line " + thisJoinPointStaticPart.getSourceLocation().getLine() 

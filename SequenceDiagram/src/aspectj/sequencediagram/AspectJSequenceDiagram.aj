@@ -1,6 +1,6 @@
 package aspectj.sequencediagram;
 
 public aspect AspectJSequenceDiagram {
-	//pointcut: traceCall():
+	//pointcut: traceCall(): !within(AspectSequenceDiagram)
 
 }

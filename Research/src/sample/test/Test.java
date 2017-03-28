@@ -1,4 +1,4 @@
-package aop_test;
+package sample.test;
 
 public class Test {
 	public void callA() {

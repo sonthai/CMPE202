@@ -1,4 +1,4 @@
-package aop_test;
+package sample.test;
 public class AspectJTestDemo {
 
 	public static void main(String[] args) {
