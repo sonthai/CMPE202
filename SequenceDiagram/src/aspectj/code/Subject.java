@@ -1,4 +1,4 @@
-package aspectj.sequencediagram;
+package aspectj.code;
 
 public interface Subject {
 	public abstract void attach(Observer obj);

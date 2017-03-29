@@ -1,4 +1,4 @@
-package aspectj.sequencediagram;
+package aspectj.code;
 
 import java.util.ArrayList;
 

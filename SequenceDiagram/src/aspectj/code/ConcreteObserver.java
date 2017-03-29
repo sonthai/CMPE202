@@ -1,4 +1,4 @@
-package aspectj.sequencediagram;
+package aspectj.code;
 
 public class ConcreteObserver implements Observer {
 	protected String observerState;

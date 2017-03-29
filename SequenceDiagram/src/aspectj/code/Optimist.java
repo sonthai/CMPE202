@@ -1,4 +1,4 @@
-package aspectj.sequencediagram;
+package aspectj.code;
 
 public class Optimist extends ConcreteObserver {
 	 public Optimist( ConcreteSubject sub )
