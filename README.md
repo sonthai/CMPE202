@@ -16,3 +16,10 @@ There are 2 scripts in the  scripts directory
 - umlparser.sh is used to run and generate UML class diagram:
 
   ./umlparser.sh < source directory> < output directory >
+
+### Instructions on how to run sequence diagram without IDE
+- Download Aspectj compiler from Install ajc https://eclipse.org/aspectj/downloads.php
+- Install Aspectj compiler: java -java < aspectj jar file>
+- Add aspectjrt.jar into CLASSPATH
+- Modify the PATH to include ~/aspectj1.x/bin
+- Compile sequence digram code using ~/scripts/sequence_diagram.sh script
