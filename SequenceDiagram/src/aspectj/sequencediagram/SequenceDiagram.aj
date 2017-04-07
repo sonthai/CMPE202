@@ -19,7 +19,7 @@ public aspect SequenceDiagram {
 	}
 	
 	after() returning(Object o): trace() {
-		traceEnd(joinPoint(thisJoinPoint), getTarget(thisJoinPoint), thisJoinPoint.getSignature(), thisJoinPoint.getSourceLocation(), o);
+		traceEnd(getThis(thisJoinPoint), getTarget(thisJoinPoint), thisJoinPoint.getSignature(), thisJoinPoint.getSourceLocation(), o);
 	}
 	
 	public void traceStart(final Class<? extends Object> joinPoint, final Class<? extends Object> target, 
