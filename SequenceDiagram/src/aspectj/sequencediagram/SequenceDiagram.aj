@@ -1,5 +1,6 @@
 package aspectj.sequencediagram;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -10,7 +11,8 @@ import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.SourceLocation;
 
 public aspect SequenceDiagram {
-	private static List<TracingPojo> messages = new ArrayList<TracingPojo>();
+	private static List<TracingPojo> tracingPojos = new ArrayList<TracingPojo>();
+	//private StringBuilder sb = new StringBuilder();
 	
 	pointcut trace() : within(aspectj.code.*) && call(* aspectj.code.*.*(..));
 	before(): trace() {
@@ -24,19 +26,27 @@ public aspect SequenceDiagram {
 	
 	public void traceStart(final Class<? extends Object> joinPoint, final Class<? extends Object> target, 
 			final Signature signature, final SourceLocation sourceLocation, final Object[] args) {
-		if (joinPoint != null && target != null) {
-			String message = joinPoint.getClass() + " -> " + target.getName() + ":" + signature.getName() + "(" + Arrays.deepToString(args) + ")";
-			messages.add(new TracingPojo(TracingType.START, joinPoint, target, signature, sourceLocation, args));
-			System.out.println(message);
+		if (target != null) {
+			//Class<? extends Object> start = null;
+			//if (joinPoint != null) {
+				//start = joinPoint.getClass();
+			//} else {
+				//start = sourceLocation.getWithinType();
+			//}
+			//String message =  joinPoint.getClass() + " -> " + target.getName() + ":" + signature.getName() + "(" + Arrays.deepToString(args) + ")";
+			tracingPojos.add(new TracingPojo(TracingType.START, joinPoint, target, signature, sourceLocation, args));
+			//System.out.println(message);
 		}
 	}
 	
 	public void traceEnd(final Class<? extends Object> joinPoint, final Class<? extends Object> target, 
 			final Signature signature, final SourceLocation sourceLocation, final Object... returnValue) {
 		if (joinPoint != null && target != null) {
-			String message = target.getClass() + " -> " + joinPoint.getName() + " : return" + "(" + Arrays.deepToString(returnValue) + ")";
-			messages.add(new TracingPojo(TracingType.START, joinPoint, target, signature, sourceLocation, returnValue));
-			System.out.println(message);
+			//String message = target.getClass() + " -> " + joinPoint.getName() + " : return" + "(" + Arrays.deepToString(returnValue) + ")";
+			if (returnValue[0] != null) {
+				tracingPojos.add(new TracingPojo(TracingType.END, joinPoint, target, signature, sourceLocation, returnValue));
+			}
+			//System.out.println(message);
 		}
 	}
 	
@@ -45,7 +55,7 @@ public aspect SequenceDiagram {
         System.out.println("Target   : "+ getTarget(joinPoint));
         System.out.println("Signature: "+ joinPoint.getSignature());
         System.out.println("Args     : "+ Arrays.deepToString(joinPoint.getArgs()));
-        System.out.println("Source   : "+ joinPoint.getSourceLocation().toString());
+        System.out.println("Source   : "+ joinPoint.getSourceLocation().getWithinType().getCanonicalName());//.getSourceLocation().toString());
         System.out.println("\n");
 	}
 	
@@ -65,8 +75,22 @@ public aspect SequenceDiagram {
 		return joinPoint.getTarget().getClass();
 	}
 	
-	public static List<TracingPojo> getMessages() {
-		return Collections.unmodifiableList(messages);
+	public static List<TracingPojo> getTracingPojos() {
+		return Collections.unmodifiableList(tracingPojos);
+	}
+
+	pointcut doneTracing(): execution(void aspectj.code.Main.main(..));
+	
+	after(): doneTracing() {
+		System.out.println("After done tracing Number of message " + getTracingPojos().size());
+		SeqDiagramGen seqGen = new SeqDiagramGen();
+		String seqString = seqGen.buildSeqDiagram(getTracingPojos());
+		try {
+			seqGen.createFile(seqString);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Seq " + seqString);
 	}
 	
 	
