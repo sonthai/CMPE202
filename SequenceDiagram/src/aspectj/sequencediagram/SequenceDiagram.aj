@@ -14,7 +14,7 @@ public aspect SequenceDiagram {
 	private static List<TracingPojo> tracingPojos = new ArrayList<TracingPojo>();
 	//private StringBuilder sb = new StringBuilder();
 	
-	pointcut trace() : within(aspectj.code.*) && call(* aspectj.code.*.*(..));
+	pointcut trace() : within(aspectj.code.*) && call(* aspectj.code.*.*(..)) && !cflow(initialization(*.new(..)));
 	before(): trace() {
 		printJoinPoint(thisJoinPoint);
 		traceStart(getThis(thisJoinPoint), getTarget(thisJoinPoint), thisJoinPoint.getSignature(), thisJoinPoint.getSourceLocation(), thisJoinPoint.getArgs());
