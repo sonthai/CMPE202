@@ -1,4 +1,4 @@
-package aspectj.sequencediagram;
+package aspects;
 
 public enum TracingType {
 	START, END

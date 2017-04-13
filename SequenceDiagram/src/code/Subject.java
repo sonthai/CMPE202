@@ -1,5 +1,4 @@
-package aspectj.code;
-
+package code;
 public interface Subject {
 	public abstract void attach(Observer obj);
 	public abstract void detach(Observer obj);

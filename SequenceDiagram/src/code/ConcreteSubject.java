@@ -1,5 +1,4 @@
-package aspectj.code;
-
+package code;
 import java.util.ArrayList;
 
 public class ConcreteSubject implements Subject {

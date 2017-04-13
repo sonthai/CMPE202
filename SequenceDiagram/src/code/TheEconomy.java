@@ -1,5 +1,4 @@
-package aspectj.code;
-
+package code;
 public class TheEconomy extends ConcreteSubject {
 
     public TheEconomy()

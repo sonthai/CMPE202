@@ -1,5 +1,4 @@
-package aspectj.code;
-
+package code;
 public class ConcreteObserver implements Observer {
 	protected String observerState;
 	protected ConcreteSubject subject;

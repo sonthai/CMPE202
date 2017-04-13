@@ -1,5 +1,4 @@
-package aspectj.code;
-
+package code;
 public class Optimist extends ConcreteObserver {
 	 public Optimist( ConcreteSubject sub )
 	 {
