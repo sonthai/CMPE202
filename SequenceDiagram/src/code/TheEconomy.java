@@ -9,6 +9,8 @@ public class TheEconomy extends ConcreteSubject {
 }
 
 /*
+
 The Price of gas is at $5.00/gal
 The New iPad is out today
+
 */

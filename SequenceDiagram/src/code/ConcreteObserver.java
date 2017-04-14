@@ -1,5 +1,7 @@
 package code;
+
 public class ConcreteObserver implements Observer {
+ 
 	protected String observerState;
 	protected ConcreteSubject subject;
 
@@ -16,4 +18,6 @@ public class ConcreteObserver implements Observer {
     {
         System.out.println( "Observer: " + this.getClass().getName() + " = " + observerState );
     }
+	 
 }
+ 

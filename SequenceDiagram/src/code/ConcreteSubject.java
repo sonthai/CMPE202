@@ -2,6 +2,7 @@ package code;
 import java.util.ArrayList;
 
 public class ConcreteSubject implements Subject {
+ 
 	private String subjectState;
 	 
 	private ArrayList<Observer> observers = new ArrayList<Observer>() ;
@@ -19,15 +20,12 @@ public class ConcreteSubject implements Subject {
 	    observers.add(obj) ;
 	}
 
-	public void detach(Observer obj) 
-	{
+	public void detach(Observer obj) {
         observers.remove(obj) ;
 	}
 
-	public void notifyObservers() 
-	{
-		
-		for (Observer obj  : observers)
+	public void notifyObservers() {
+        for (Observer obj  : observers)
         {
             obj.update();
         }
@@ -38,5 +36,5 @@ public class ConcreteSubject implements Subject {
         System.out.println( "Subject: " + this.getClass().getName() + " = " + subjectState );
     }
 	 
-
 }
+ 
