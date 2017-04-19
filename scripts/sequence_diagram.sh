@@ -16,8 +16,6 @@ ajc -1.8  -classpath .:$CLASSPATH  -d $TARGET_DIR src/aspects/*.java src/aspects
 echo "**************************************"
 
 echo "Generate sequence diagram"
+echo "Output Directory: " $1
 cd $TARGET_DIR
-java  -classpath .:../$CLASSPATH code/Main
-
-# Copy out.png into output directory
-mv out.png ../output/
+java  -classpath .:../$CLASSPATH code/Main $1
