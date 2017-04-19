@@ -20,14 +20,8 @@ public class SeqDiagramGen {
 	public String buildSeqDiagram(List<TracingPojo> pojos) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("@startuml\n").append("autonumber\n");
-		//System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxx");
 		for (TracingPojo pojo: pojos) {
-			/*String source = (pojo.getSource() != null ? pojo.getSource().getSimpleName() : pojo.getSourceLocation().getWithinType().getSimpleName());
-			System.out.println("Type " + pojo.getTracingType().name());
-			System.out.println("Source " + source);
-			System.out.println("Target " + pojo.getTarget().getSimpleName());
-			System.out.println("Message " + pojo.getSignature().getName());*/
-			printStack();
+			//printStack();
 			switch(pojo.getTracingType()) {
 				case START:
 					sb.append(buildCallMessage(pojo));
@@ -37,18 +31,17 @@ public class SeqDiagramGen {
 					break;
 			}
 		}
-		//System.out.println("xxxxxxxxxxxDONE with iterationxxxxxxxxxxxxx");
-		printStack();
-		//System.out.println("xxxxxxxxxxxxEND OD DONExxxxxxxxxxxxxxx");
+		//printStack();
 		sb.append("@enduml\n");
 		return sb.toString();
 	}
 	
-	public void createFile(String seqStr) throws FileNotFoundException {
+	public void createFile(String seqStr, String outputDir) throws FileNotFoundException {
 		 try {
-			 //System.out.println(seqStr)
+			 StringBuilder sb = new StringBuilder(outputDir);
+			 sb.append("/out.png");
 			 SourceStringReader reader = new SourceStringReader(seqStr);
-	         FileOutputStream output = new FileOutputStream(new File("out.png"));
+	         FileOutputStream output = new FileOutputStream(new File(sb.toString()));
 	         reader.generateImage(output, new FileFormatOption(FileFormat.PNG, false));
 	     } catch (Exception e) {
 	        System.out.println(e.getMessage());
@@ -60,7 +53,7 @@ public class SeqDiagramGen {
 		String source = (pojo.getSource() != null ? pojo.getSource().getSimpleName() : pojo.getSourceLocation().getWithinType().getSimpleName());
 		
 		while (!startStack.isEmpty() && !startStack.peek().equals(source)) {
-			System.out.println("Pop " + startStack.peek());
+			//System.out.println("Pop " + startStack.peek());
 			sb.append("deactivate ").append(startStack.pop()).append("\n");
 		}
 		
@@ -73,14 +66,14 @@ public class SeqDiagramGen {
 		sb.append("activate ").append(pojo.getTarget().getSimpleName()).append("\n");
 
 		startStack.push(pojo.getTarget().getSimpleName());
-		System.out.println("Push " + startStack.peek());
+		//System.out.println("Push " + startStack.peek());
 		
 		return sb.toString();
 	}
 	
 	private static String buildReturnMessage(TracingPojo pojo) {
 		if (startStack.peek().equals(pojo.getTarget().getSimpleName())) {
-			System.out.println("Pop After return " + startStack.peek());
+			//System.out.println("Pop After return " + startStack.peek());
 			startStack.pop();
 		}
 		StringBuilder sb = new StringBuilder();

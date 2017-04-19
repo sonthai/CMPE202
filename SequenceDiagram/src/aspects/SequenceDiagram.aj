@@ -11,11 +11,17 @@ import org.aspectj.lang.reflect.SourceLocation;
 
 public aspect SequenceDiagram {
 	private static List<TracingPojo> tracingPojos = new ArrayList<TracingPojo>();
+	private static String outputDir;
 	//pointcut exclusionClass(): !within(SequenceDiagram) && !within(SeqDiagramGen) && !within(TracingType) && !within(TracingPojo);
 	//pointcut inclusion(): within(Main) && within(ConcreteObserver) && within(ConcreteSubject) && within(Observer) && within(Optimist) && within(Pessimist) && within(Subject) && within(TheEconomy);
+	pointcut captureMainArgs(String [] args): execution(* code.Main.main(..)) && args(args);
+	before(String [] args): captureMainArgs(args) {
+		outputDir = args[0];
+	}
+	
 	pointcut trace() : within (code.*) && call(* code.*.*(..)) && !cflow(initialization(*.new(..)));
 	before(): trace() {
-		printJoinPoint(thisJoinPoint);
+		//printJoinPoint(thisJoinPoint);
 		traceStart(getThis(thisJoinPoint), getTarget(thisJoinPoint), thisJoinPoint.getSignature(), thisJoinPoint.getSourceLocation(), thisJoinPoint.getArgs());
 	}
 	
@@ -68,18 +74,17 @@ public aspect SequenceDiagram {
 		return Collections.unmodifiableList(tracingPojos);
 	}
 
-	pointcut doneTracing(): execution(* code.Main.main(..));
-	
-	after(): doneTracing() {
-		System.out.println("After done tracing Number of message " + getTracingPojos().size());
+	pointcut callMain(): execution(* code.Main.main(..));
+	after(): callMain() {
+		//System.out.println("After done tracing Number of message " + getTracingPojos().size());
 		SeqDiagramGen seqGen = new SeqDiagramGen();
 		String seqString = seqGen.buildSeqDiagram(getTracingPojos());
 		try {
-			seqGen.createFile(seqString);
+			seqGen.createFile(seqString, outputDir);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Seq " + seqString);
+		//System.out.println("Seq " + seqString);
 	}
 	
 }
