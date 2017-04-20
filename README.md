@@ -23,3 +23,5 @@ There are 2 scripts in the  scripts directory
 - Add aspectjrt.jar into CLASSPATH
 - Modify the PATH to include ~/aspectj1.x/bin
 - Compile sequence digram code using ~/scripts/sequence_diagram.sh script
+   
+   ./sequence_diagram.sh < output directory>
