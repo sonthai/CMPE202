@@ -24,7 +24,6 @@ import java.util.*;
  * Created by sonthai on 2/20/17.
  */
 public class MyJavaParser {
-    //public static String rootDir = "src/main/resources/";
     public static Map<String, ClassPojo> rules = new HashMap<String, ClassPojo>();
     public static Map<String, Integer> accessAttrMap = new HashMap<String, Integer>();
     public static Map<String, String>  classMapping = new HashMap<>();
@@ -47,7 +46,6 @@ public class MyJavaParser {
         try {
             for (String f : files) {
                 File sourceFile = new File(f);
-                System.out.println("Source file " + sourceFile);
                 compilationUnit = JavaParser.parse(sourceFile);
                 classesOrInterafces = compilationUnit.getNodesByType(ClassOrInterfaceDeclaration.class);
                 for (ClassOrInterfaceDeclaration declaration : classesOrInterafces) {
@@ -251,9 +249,6 @@ public class MyJavaParser {
         }
         
         plantUMLObj.createEndTag();
-        System.out.println("*******PlantUML Obj *****");
-        System.out.println(plantUMLObj.buildumlBodyString());
-        System.out.println("************");
         try {
             SourceStringReader reader = new SourceStringReader(plantUMLObj.buildumlBodyString());
             FileOutputStream output = new FileOutputStream(new File(destDir + fileName));
@@ -277,7 +272,6 @@ public class MyJavaParser {
                         fieldAccess = ((FieldAccessExpr) assignExpr.getTarget()).getName().toString();
                     }
                 }
-                System.out.println(expressionStmt.toString());
             } else if (block.get(0) instanceof ReturnStmt) {
                 ReturnStmt returnStmt = (ReturnStmt) block.get(0);
                 if (returnStmt.getExpression().get() instanceof FieldAccessExpr) {

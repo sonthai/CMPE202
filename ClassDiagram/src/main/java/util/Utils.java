@@ -19,16 +19,6 @@ public class Utils {
     final static Logger LOG = Logger.getLogger(Utils.class);
 
     public List<String> getFilePaths(String sourceDir) {
-        /*StringBuilder sb;
-        List<String> filePaths =  new ArrayList<String>();
-
-        List<String> files = getListFiles(sourceDir);
-        for (String f: files) {
-            sb = new StringBuilder();
-            filePaths.add(sb.append(sourceDir).append("/").append(f).toString());
-        }
-
-        return filePaths;*/
         return loadFilesFromDir(sourceDir);
     }
 
@@ -37,7 +27,7 @@ public class Utils {
         List<String> files =  new ArrayList<String>();
         ClassLoader classLoader = getClass().getClassLoader();
         try {
-            String dirStr = IOUtils.toString(new URL(sourceDir));//classLoader.getResource(sourceDir));
+            String dirStr = IOUtils.toString(new URL(sourceDir));
             for (String p: dirStr.split("\n")) {
                 if (p.endsWith(".java")) {
                     files.add(p);
