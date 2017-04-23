@@ -1,4 +1,4 @@
-clean:
+build:
 	scripts/build.sh
 
 umlparser:
