@@ -39,7 +39,7 @@ public class SeqDiagramGen {
 	public void createFile(String seqStr, String outputDir) throws FileNotFoundException {
 		 try {
 			 StringBuilder sb = new StringBuilder(outputDir);
-			 sb.append("/out.png");
+			 sb.append("/sequence.png");
 			 SourceStringReader reader = new SourceStringReader(seqStr);
 	         FileOutputStream output = new FileOutputStream(new File(sb.toString()));
 	         reader.generateImage(output, new FileFormatOption(FileFormat.PNG, false));

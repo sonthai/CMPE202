@@ -12,14 +12,31 @@ import org.aspectj.lang.reflect.SourceLocation;
 public aspect SequenceDiagram {
 	private static List<TracingPojo> tracingPojos = new ArrayList<TracingPojo>();
 	private static String outputDir;
-	//pointcut exclusionClass(): !within(SequenceDiagram) && !within(SeqDiagramGen) && !within(TracingType) && !within(TracingPojo);
-	//pointcut inclusion(): within(Main) && within(ConcreteObserver) && within(ConcreteSubject) && within(Observer) && within(Optimist) && within(Pessimist) && within(Subject) && within(TheEconomy);
-	pointcut captureMainArgs(String [] args): execution(* code.Main.main(..)) && args(args);
+	
+	// This pointcut is used to capture output directory
+	pointcut captureMainArgs(String [] args): execution(* sequence.Main.main(..)) && args(args);
+	
+	// This pointcut is used to detect when the main method is done then generate sequence diagram 
+	pointcut callMain(): execution(* sequence.Main.main(..));
+	
+	// This pointcut is used to trace execution
+	pointcut trace() : within (sequence.*) && call(* sequence.*.*(..)) && !cflow(initialization(*.new(..)));
+	
 	before(String [] args): captureMainArgs(args) {
 		outputDir = args[0];
 	}
 	
-	pointcut trace() : within (code.*) && call(* code.*.*(..)) && !cflow(initialization(*.new(..)));
+	after(): callMain() {
+		SeqDiagramGen seqGen = new SeqDiagramGen();
+		String seqString = seqGen.buildSeqDiagram(getTracingPojos());
+		try {
+			seqGen.createFile(seqString, outputDir);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		//System.out.println("Seq " + seqString);
+	}
+	
 	before(): trace() {
 		//printJoinPoint(thisJoinPoint);
 		traceStart(getThis(thisJoinPoint), getTarget(thisJoinPoint), thisJoinPoint.getSignature(), thisJoinPoint.getSourceLocation(), thisJoinPoint.getArgs());
@@ -36,6 +53,8 @@ public aspect SequenceDiagram {
 		}
 	}
 	
+	
+	// Helper methods
 	public void traceEnd(final Class<? extends Object> joinPoint, final Class<? extends Object> target, 
 			final Signature signature, final SourceLocation sourceLocation, final Object... returnValue) {
 		if (joinPoint != null && target != null) {
@@ -72,19 +91,6 @@ public aspect SequenceDiagram {
 	
 	public static List<TracingPojo> getTracingPojos() {
 		return Collections.unmodifiableList(tracingPojos);
-	}
-
-	pointcut callMain(): execution(* code.Main.main(..));
-	after(): callMain() {
-		//System.out.println("After done tracing Number of message " + getTracingPojos().size());
-		SeqDiagramGen seqGen = new SeqDiagramGen();
-		String seqString = seqGen.buildSeqDiagram(getTracingPojos());
-		try {
-			seqGen.createFile(seqString, outputDir);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		//System.out.println("Seq " + seqString);
 	}
 	
 }

@@ -1,4 +1,4 @@
-package code;
+package sequence;
 public interface Subject {
  
 	public abstract void attach(Observer obj);

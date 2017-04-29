@@ -1,4 +1,4 @@
-package code;
+package sequence;
 import java.util.ArrayList;
 
 public class ConcreteSubject implements Subject {

@@ -1,4 +1,4 @@
-package code;
+package sequence;
 public class Pessimist extends ConcreteObserver {
 
     public Pessimist( ConcreteSubject sub )
