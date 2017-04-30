@@ -1,4 +1,4 @@
-package aspects; 
+package myaspect; 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,11 +34,9 @@ public aspect SequenceDiagram {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		//System.out.println("Seq " + seqString);
 	}
 	
 	before(): trace() {
-		//printJoinPoint(thisJoinPoint);
 		traceStart(getThis(thisJoinPoint), getTarget(thisJoinPoint), thisJoinPoint.getSignature(), thisJoinPoint.getSourceLocation(), thisJoinPoint.getArgs());
 	}
 	

@@ -251,7 +251,11 @@ public class MyJavaParser {
         plantUMLObj.createEndTag();
         try {
             SourceStringReader reader = new SourceStringReader(plantUMLObj.buildumlBodyString());
-            FileOutputStream output = new FileOutputStream(new File(destDir + fileName));
+            String outputFile = destDir;
+            if (!destDir.endsWith(".png")) {
+            	outputFile = destDir + fileName;
+            }
+            FileOutputStream output = new FileOutputStream(new File(outputFile));
             reader.generateImage(output, new FileFormatOption(FileFormat.PNG, false));
         } catch (Exception e) {
         	System.out.println(e.getMessage());

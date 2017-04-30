@@ -1,4 +1,4 @@
-package aspects; 
+package myaspect; 
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,7 +21,6 @@ public class SeqDiagramGen {
 		StringBuilder sb = new StringBuilder();
 		sb.append("@startuml\n").append("autonumber\n");
 		for (TracingPojo pojo: pojos) {
-			//printStack();
 			switch(pojo.getTracingType()) {
 				case START:
 					sb.append(buildCallMessage(pojo));
@@ -31,7 +30,6 @@ public class SeqDiagramGen {
 					break;
 			}
 		}
-		//printStack();
 		sb.append("@enduml\n");
 		return sb.toString();
 	}
@@ -53,7 +51,6 @@ public class SeqDiagramGen {
 		String source = (pojo.getSource() != null ? pojo.getSource().getSimpleName() : pojo.getSourceLocation().getWithinType().getSimpleName());
 		
 		while (!startStack.isEmpty() && !startStack.peek().equals(source)) {
-			//System.out.println("Pop " + startStack.peek());
 			sb.append("deactivate ").append(startStack.pop()).append("\n");
 		}
 		
@@ -66,14 +63,12 @@ public class SeqDiagramGen {
 		sb.append("activate ").append(pojo.getTarget().getSimpleName()).append("\n");
 
 		startStack.push(pojo.getTarget().getSimpleName());
-		//System.out.println("Push " + startStack.peek());
 		
 		return sb.toString();
 	}
 	
 	private static String buildReturnMessage(TracingPojo pojo) {
 		if (startStack.peek().equals(pojo.getTarget().getSimpleName())) {
-			//System.out.println("Pop After return " + startStack.peek());
 			startStack.pop();
 		}
 		StringBuilder sb = new StringBuilder();

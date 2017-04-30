@@ -12,7 +12,7 @@ echo "*************************************"
 
 # Compile the source
 echo "Compiling..."
-ajc -1.8  -classpath .:$CLASSPATH  -d $TARGET_DIR src/aspects/*.java src/aspects/*.aj src/sequence/*.java
+ajc -1.8  -classpath .:$CLASSPATH  -d $TARGET_DIR src/myaspect/*.java src/myaspect/*.aj src/sequence/*.java
 echo "**************************************"
 
 echo "Generate sequence diagram"

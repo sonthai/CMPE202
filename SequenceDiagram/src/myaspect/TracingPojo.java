@@ -1,4 +1,4 @@
-package aspects; 
+package myaspect; 
 
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.SourceLocation;
