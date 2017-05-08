@@ -1,7 +1,7 @@
 # UML Parser Project
 
 ## Introduction
-Creating a Parser which converts Java Source Code into both UML Class Diagram and UML Sequence Diagram
+Creating a Parser which converts Java Source Code into both UML Class Diagram and UML Sequence Diagram.
 
 ## Tools
 - Maven: Handle package dependency
@@ -12,6 +12,7 @@ Creating a Parser which converts Java Source Code into both UML Class Diagram an
 ## How to generate Class Diagram and Sequence Diagram from Java source code
 A Makefile file will be used to generate both Class Diagram and Sequence Diagram.
 
+````
 Makefile supports the following operations:
 
 1. Clean, compile, and build the Class Diagram project
@@ -20,21 +21,13 @@ Makefile supports the following operations:
 
 2. Generate the UML Class Diagram 
 
-    make umlparser INPUT=< source directory> OUTPUT=[< output directory>|< output filename>]
+    make umlparser INPUT=<source directory> OUTPUT=[<output directory>|<output filename>]
+    
+    INPUT and OUTPUT arguments must be relative paths.
 
-
-### How to run the project without the IDE
-There are 2 scripts in the  scripts directory
-- build.sh is used to clean, compile, and build project
-- umlparser.sh is used to run and generate UML class diagram:
-
-  ./umlparser.sh < source directory> < output directory >
-
-### Instructions on how to run sequence diagram without IDE
-- Download Aspectj compiler from Install ajc https://eclipse.org/aspectj/downloads.php
-- Install Aspectj compiler: java -java < aspectj jar file>
-- Add aspectjrt.jar into CLASSPATH
-- Modify the PATH to include ~/aspectj1.x/bin
-- Compile sequence digram code using ~/scripts/sequence_diagram.sh script
+3. Generate the UML Sequence Diagram
+   make aspects OUTPUT=<output directory>
+   OUTPUT argument must be a relative path
    
-   ./sequence_diagram.sh < output directory>
+   Notes: The testcase is put in the package sequence under SequenceDiagram/src/sequence/
+````
