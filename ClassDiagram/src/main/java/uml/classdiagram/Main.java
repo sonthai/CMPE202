@@ -1,6 +1,4 @@
 package uml.classdiagram;
-
-import org.apache.log4j.Logger;
 import parser.MyJavaParser;
 
 
@@ -8,7 +6,6 @@ import parser.MyJavaParser;
  * Created by sonthai on 2/18/17.
  */
 public class Main {
-    final static Logger LOG = Logger.getLogger(Main.class);
 
 
     public static void main(String[] args) throws Exception {

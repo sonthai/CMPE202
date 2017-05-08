@@ -16,7 +16,6 @@ import java.util.List;
  * Created by sonthai on 2/20/17.
  */
 public class Utils {
-    final static Logger LOG = Logger.getLogger(Utils.class);
 
     public List<String> getFilePaths(String sourceDir) {
         return loadFilesFromDir(sourceDir);
@@ -34,7 +33,7 @@ public class Utils {
                 }
             }
         } catch (IOException e) {
-            LOG.error("Failed to find path " + sourceDir);
+            System.out.println("Failed to find path " + sourceDir);
         }
 
         return files;
