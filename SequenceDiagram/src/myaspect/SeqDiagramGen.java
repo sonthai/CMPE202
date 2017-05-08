@@ -20,6 +20,7 @@ public class SeqDiagramGen {
 	public String buildSeqDiagram(List<TracingPojo> pojos) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("@startuml\n").append("autonumber\n");
+		sb.append("activate Main\n");
 		for (TracingPojo pojo: pojos) {
 			switch(pojo.getTracingType()) {
 				case START:
@@ -30,6 +31,7 @@ public class SeqDiagramGen {
 					break;
 			}
 		}
+		sb.append("deactivate Main\n");
 		sb.append("@enduml\n");
 		return sb.toString();
 	}
