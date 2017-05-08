@@ -23,11 +23,11 @@ Makefile supports the following operations:
 
     make umlparser INPUT=<source directory> OUTPUT=[<output directory>|<output filename>]
     
-    INPUT and OUTPUT arguments must be relative paths.
+    INPUT and OUTPUT arguments must be absolute paths.
 
 3. Generate the UML Sequence Diagram
    make aspects OUTPUT=<output directory>
-   OUTPUT argument must be a relative path
+   OUTPUT argument must be a absolute path.
    
    Notes: The testcase is put in the package sequence under SequenceDiagram/src/sequence/
 ````
