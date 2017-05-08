@@ -1,14 +1,27 @@
-# CMPE202
+# UML Parser Project
 
-### Notes
+## Introduction
+Creating a Parser which converts Java Source Code into both UML Class Diagram and UML Sequence Diagram
 
-The coding of Class Diagram is done, and I will some unit tests and refactor the code
+## Tools
+- Maven: Handle package dependency
+- JavaParser: Convert Java Source Code to Abstract Syntax Tree
+- PlantUML: Generate UML Diagram in PNG format in from the provided string input 
+- AspectJ compiler: to capture Java class at defined pointcuts to tracing sequential actions of the Java program
 
-Currently, I'm working on sequence diagram. 
+## How to generate Class Diagram and Sequence Diagram from Java source code
+A Makefile file will be used to generate both Class Diagram and Sequence Diagram.
 
-### Requirements for the project
-- Installing maven
-- Install AspectJ in Eclipse.
+Makefile supports the following operations:
+
+1. Clean, compile, and build the Class Diagram project
+
+    make build
+
+2. Generate the UML Class Diagram 
+
+    make umlparser INPUT=< source directory> OUTPUT=[< output directory>|< output filename>]
+
 
 ### How to run the project without the IDE
 There are 2 scripts in the  scripts directory
