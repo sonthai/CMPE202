@@ -125,20 +125,14 @@
 					  <!-- exclude junit, we need runtime dependency only -->
 					  <includeScope>runtime</includeScope>
 					  <outputDirectory>${project.build.directory}/lib/</outputDirectory>
+					  <archive>
+			      		       <manifest>
+			       			   <mainClass>uml.classdiagram.Main</mainClass>
+			      		       </manifest>
+			    		  </archive>
 					</configuration>
 				  </execution>
 				</executions>
-			</plugin>
-		    <plugin>
-			  <groupId>org.apache.maven.plugins</groupId>
-			  <artifactId>maven-assembly-plugin</artifactId>
-			  <configuration>
-			    <archive>
-			      <manifest>
-			        <mainClass>uml.classdiagram.Main</mainClass>
-			      </manifest>
-			    </archive>
-			  </configuration>
 			</plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
