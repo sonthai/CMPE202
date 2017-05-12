@@ -40,3 +40,10 @@ The outputs for the Class Diagram testcases are located at [Class Diagram Output
 **UML Sequence Diagram**
 
 The output for the Sequence Diagram testcase is located at [Sequence Diagram Output](https://github.com/sonthai/CMPE202/tree/master/SequenceDiagram/output).
+
+### Demo
+I integrated my UML Class Diagram with the 2 other students from CMPE 281. Below is URL Links to YouTube: 
+
+    - By Kang Hua Wu https://youtu.be/8xh2-LDrM_k (Between 7:35 and 8:15)
+    
+    - By Tuan Ung: https://www.youtube.com/watch?v=J1p6r9cU8-8 (Between 10:15 and 12:00)
